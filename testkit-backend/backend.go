@@ -21,6 +21,7 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -284,9 +285,9 @@ func (b *backend) handleTransactionFunc(isRead bool, data map[string]interface{}
 	}
 	var err error
 	if isRead {
-		_, err = sessionState.session.ReadTransaction(blockingRetry, b.toTransactionConfigApply(data))
+		_, err = sessionState.session.ReadTransaction(context.TODO(), blockingRetry, b.toTransactionConfigApply(data))
 	} else {
-		_, err = sessionState.session.WriteTransaction(blockingRetry, b.toTransactionConfigApply(data))
+		_, err = sessionState.session.WriteTransaction(context.TODO(), blockingRetry, b.toTransactionConfigApply(data))
 	}
 
 	if err != nil {
@@ -461,7 +462,7 @@ func (b *backend) handleRequest(req map[string]interface{}) {
 	case "SessionRun":
 		sessionState := b.sessionStates[data["sessionId"].(string)]
 		cypher, params := b.toCypherAndParams(data)
-		result, err := sessionState.session.Run(cypher, params, b.toTransactionConfigApply(data))
+		result, err := sessionState.session.Run(context.TODO(), cypher, params, b.toTransactionConfigApply(data))
 		if err != nil {
 			b.writeError(err)
 			return
@@ -472,7 +473,7 @@ func (b *backend) handleRequest(req map[string]interface{}) {
 
 	case "SessionBeginTransaction":
 		sessionState := b.sessionStates[data["sessionId"].(string)]
-		tx, err := sessionState.session.BeginTransaction(b.toTransactionConfigApply(data))
+		tx, err := sessionState.session.BeginTransaction(context.TODO(), b.toTransactionConfigApply(data))
 		if err != nil {
 			b.writeError(err)
 			return
