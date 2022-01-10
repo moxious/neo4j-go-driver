@@ -104,12 +104,15 @@ The driver implements Bolt protocol version 3. This means that either Neo4j serv
 
 Neo4j server 4 supports both Bolt protocol version 3 and version 4.
 
-## Connecting to a causal cluster
+## Connecting to Neo4j AuraDB or a Neo4j Causal Cluster
 
-You just need to use `neo4j` as the URL scheme and set host of the URL to one of your core members of the cluster.
+For Neo4j AuraDB, you must use the `neo4j+s://` scheme in your URL; for other clusters, `neo4j` may be appropriate.  
+Set the host of the URL to one of your core members of the cluster, or the address provided by Neo4j AuraDB when you created
+your database.  See the [available URI schemes](https://neo4j.com/docs/java-manual/current/client-applications/#java-driver-configuration-examples)
+for more information.
 
 ```go
-if driver, err = neo4j.NewDriver("neo4j://localhost:7687", neo4j.BasicAuth("username", "password", "")); err != nil {
+if driver, err = neo4j.NewDriver("neo4j+s://ea00c0bd.databases.neo4j.io:7687", neo4j.BasicAuth("username", "password", "")); err != nil {
 	return err // handle error
 }
 ```
